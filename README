@@ -1,0 +1,40 @@
+Stemp is a simple templating program.
+
+Stemp uses the golang's text/template and html/template under the hood and
+designed with the UNIX philosophy in mind, which means it is designed to be
+scriptable and you can easily pipe stuff to or from it to other programs.
+
+Examples
+========
+
+NOTE: In order to keep the examples simple, the shell is used in this examples
+is bash(1) because it supports "Process Substitution" (i.e. the <(...) stuff).
+
+By default stemp uses the file extention to determine the file type, but in
+cases where you don't have a file extention or in this case where we are passing
+the vars using process substitution we have to implicitly specify the format
+that were using. This is done using the '-f' or '--vars-format' option.
+
+    $ echo "{{ .my_var }}" | stemp -f json - <(echo '{"my_var": "something"}')
+    something
+
+    $ echo "{{ .x | inc }}" | stemp -f json - <(echo 'x = 68')
+    69
+
+By default stemp writes the result to stdout, you can write the output to a file
+by using the '-o' or '--output' options.
+
+    $ echo "{{ range .xs }}{{ . }}{{ end }}" | stemp -f yaml -o out.txt - <(echo 'xs: ["a", "b", "c"]')
+    $ cat out.txt
+    abc
+
+You can use the '-H' or '--html' option to use html/template instead of the
+text/template for safe html output to prevent code injection.
+
+    $ echo "{{ .unsafe_html }}" | stemp -f json -H - <(echo '{"unsafe_html": "<script>alert(1)</script>"}') -f json
+    &lt;script&gt;alert(1)&lt;/script&gt;
+
+License
+=======
+
+This project is licensed under the GPLv3 copyleft license.
