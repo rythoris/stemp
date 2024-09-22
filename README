@@ -34,6 +34,38 @@ text/template for safe html output to prevent code injection.
     $ echo "{{ .unsafe_html }}" | stemp -f json -H - <(echo '{"unsafe_html": "<script>alert(1)</script>"}') -f json
     &lt;script&gt;alert(1)&lt;/script&gt;
 
+Stemp Functions
+===============
+
+List of stemp function mappings and their respective types:
+
+    inc :: (int) -> int
+    dec :: (int) -> int
+    add :: (int, int) -> int
+    sub :: (int, int) -> int
+    div :: (int, int) -> int
+    mul :: (int, int) -> int
+    mod :: (int, int) -> int
+
+    sin          math.Sin
+    cos          math.Cos
+    tan          math.Tan
+    abs          math.Abs
+    floor        math.Floor
+    ceil         math.Ceil
+
+    join         strings.Join,
+    trim         strings.TrimSpace,
+    trim_prefix  strings.TrimPrefix,
+    trim_suffix  strings.TrimSuffix,
+    has_prefix   strings.HasPrefix,
+    has_suffix   strings.HasSuffix,
+    upper        strings.ToUpper,
+    lower        strings.ToLower,
+    title        strings.ToTitle,
+
+Feel send a PR to extend this list.
+
 License
 =======
 
