@@ -184,7 +184,15 @@ func main() {
 	if err != nil {
 		fatalf("ERROR: could not parse template file: %s\n", err.Error())
 	}
-	if err := t.Execute(outputFile, Vars); err != nil {
+
+	sb := &strings.Builder{}
+	sb.Grow(2048) // Allocate some memory for buffering
+
+	if err := t.Execute(sb, Vars); err != nil {
+		fatalf("ERROR: could execute template: %s\n", err.Error())
+	}
+
+	if _, err := outputFile.WriteString(sb.String()); err != nil {
 		fatalf("ERROR: could execute template: %s\n", err.Error())
 	}
 }
