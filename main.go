@@ -27,7 +27,7 @@ import (
 	"strings"
 
 	htemplate "html/template"
-	template "text/template"
+	"text/template"
 
 	"github.com/alexflint/go-arg"
 
@@ -170,9 +170,15 @@ func main() {
 
 	t, err := func() (DummyTemplateInterface, error) {
 		if cli.HtmlTemplate {
-			return htemplate.New("template").Funcs(defaultFuncs).Parse(string(templateFileContent))
+			return htemplate.
+				New("template").
+				Option("missingkey=error").
+				Funcs(defaultFuncs).Parse(string(templateFileContent))
 		} else {
-			return template.New("template").Funcs(defaultFuncs).Parse(string(templateFileContent))
+			return template.
+				New("template").
+				Option("missingkey=error").
+				Funcs(defaultFuncs).Parse(string(templateFileContent))
 		}
 	}()
 	if err != nil {
