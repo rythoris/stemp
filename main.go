@@ -76,7 +76,6 @@ type Cli struct {
 	Templates    []string `arg:"-i,--include,separate" placeholder:"TEMPLATE" help:"include additional template files (useful for defining templates and using them in the main template)"`
 	VarsFormat   string   `arg:"-f,--vars-format" help:"implicitly specify the vars-file format (supported formats: json, yaml, toml)"`
 	OutputFile   string   `arg:"-o,--output" help:"specify output file, by default it will print the result to stdout."`
-	HtmlTemplate bool     `arg:"-H, --html" help:"html mode. uses html/template module instead of text/template."`
 
 	Version bool `arg:"-v,--version" help:"display program version and exit"`
 }
