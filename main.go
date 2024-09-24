@@ -58,13 +58,15 @@ var defaultFuncs = template.FuncMap{
 
 	"join":        strings.Join,
 	"trim":        strings.TrimSpace,
-	"trim_prefix": strings.TrimPrefix,
-	"trim_suffix": strings.TrimSuffix,
-	"has_prefix":  strings.HasPrefix,
-	"has_suffix":  strings.HasSuffix,
+	"trimPrefix": strings.TrimPrefix,
+	"trimSuffix": strings.TrimSuffix,
+	"hasPrefix":  strings.HasPrefix,
+	"hasSuffix":  strings.HasSuffix,
 	"upper":       strings.ToUpper,
 	"lower":       strings.ToLower,
 	"title":       strings.ToTitle,
+
+	"safeHtml": template.HTMLEscapeString,
 }
 
 type Cli struct {
