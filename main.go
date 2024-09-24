@@ -170,7 +170,6 @@ func main() {
 		Funcs(defaultFuncs)
 
 	if len(cli.Templates) > 0 {
-		fmt.Println(cli.Templates)
 		t, err = t.ParseFiles(cli.Templates...)
 		if err != nil {
 			fatalf("ERROR: could not parse additional template files: %s\n", err.Error())
