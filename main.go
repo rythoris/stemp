@@ -118,7 +118,7 @@ func main() {
 	}
 
 	format := cli.VarsFormat
-	if cli.VarsFile != "-" {
+	if len(cli.VarsFile) == 0 {
 		format = strings.TrimLeft(filepath.Ext(cli.VarsFile), ".")
 	}
 
@@ -132,7 +132,7 @@ func main() {
 	case "toml":
 		unmarshalFunc = toml.Unmarshal
 	default:
-		if len(cli.VarsFormat) == 0 {
+		if len(cli.VarsFormat) != 0 {
 			fatalf("ERROR: invalid '--vars-format' value: %s\n", cli.VarsFormat)
 		} else {
 			fatalf("ERROR: could not detect file-type using the file extention: %s\n", cli.VarsFile)
