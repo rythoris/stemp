@@ -36,7 +36,7 @@ import (
 
 // TODO: automated testing
 
-const VERSION = "0.1.1"
+const VERSION = "0.2.0"
 
 var defaultFuncs = template.FuncMap{
 	"inc": func(a int64) int64 { return a + 1 },
