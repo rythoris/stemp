@@ -26,7 +26,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	htemplate "html/template"
 	"text/template"
 
 	"github.com/alexflint/go-arg"
@@ -69,12 +68,13 @@ var defaultFuncs = template.FuncMap{
 }
 
 type Cli struct {
-	TemplateFile string `arg:"positional" placeholder:"TEMPLATE" help:"template file"`
+	TemplateFile string `arg:"positional" placeholder:"TEMPLATE" help:"main template file"`
 	VarsFile     string `arg:"positional" placeholder:"VARS_FILE" help:"variables file"`
 
-	VarsFormat   string `arg:"-f,--vars-format" help:"implicitly specify the vars-file format (supported formats: json, yaml, toml)"`
-	OutputFile   string `arg:"-o,--output" help:"specify output file, by default it will print the result to stdout."`
-	HtmlTemplate bool   `arg:"-H, --html" help:"html mode. uses html/template module instead of text/template."`
+	Templates    []string `arg:"-i,--include,separate" placeholder:"TEMPLATE" help:"include additional template files (useful for defining templates and using them in the main template)"`
+	VarsFormat   string   `arg:"-f,--vars-format" help:"implicitly specify the vars-file format (supported formats: json, yaml, toml)"`
+	OutputFile   string   `arg:"-o,--output" help:"specify output file, by default it will print the result to stdout."`
+	HtmlTemplate bool     `arg:"-H, --html" help:"html mode. uses html/template module instead of text/template."`
 
 	Version bool `arg:"-v,--version" help:"display program version and exit"`
 }
@@ -163,32 +163,29 @@ func main() {
 		fatalf("ERROR: unmarshall error: %s\n", err.Error())
 	}
 
-	// I know, I know... but It fucking works!
-	type DummyTemplateInterface interface {
-		Execute(io.Writer, any) error
+	t := template.
+		New("templates").
+		Option("missingkey=error").
+		Funcs(defaultFuncs)
+
+	if len(cli.Templates) > 0 {
+		fmt.Println(cli.Templates)
+		t, err = t.ParseFiles(cli.Templates...)
+		if err != nil {
+			fatalf("ERROR: could not parse additional template files: %s\n", err.Error())
+		}
 	}
 
-	t, err := func() (DummyTemplateInterface, error) {
-		if cli.HtmlTemplate {
-			return htemplate.
-				New("template").
-				Option("missingkey=error").
-				Funcs(defaultFuncs).Parse(string(templateFileContent))
-		} else {
-			return template.
-				New("template").
-				Option("missingkey=error").
-				Funcs(defaultFuncs).Parse(string(templateFileContent))
-		}
-	}()
+	randomTemplateName := fmt.Sprintf("main_%d", os.Getpid())
+	t, err = t.New(randomTemplateName).Parse(string(templateFileContent))
 	if err != nil {
-		fatalf("ERROR: could not parse template file: %s\n", err.Error())
+		fatalf("ERROR: could not parse main template: %s\n", err.Error())
 	}
 
 	sb := &strings.Builder{}
 	sb.Grow(2048) // Allocate some memory for buffering
 
-	if err := t.Execute(sb, Vars); err != nil {
+	if err := t.ExecuteTemplate(sb, randomTemplateName, Vars); err != nil {
 		fatalf("ERROR: could execute template: %s\n", err.Error())
 	}
 
