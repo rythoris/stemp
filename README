@@ -28,10 +28,10 @@ by using the '-o' or '--output' options.
     $ cat out.txt
     abc
 
-You can use the '-H' or '--html' option to use html/template instead of the
-text/template for safe html output to prevent code injection.
+You can use the 'safeHtml' function to escape html tags in order to prevent code
+injection.
 
-    $ echo "{{ .unsafe_html }}" | stemp -f json -H - <(echo '{"unsafe_html": "<script>alert(1)</script>"}') -f json
+    $ echo "{{ .unsafe_html | safeHtml }}" | stemp -f json - <(echo '{"unsafe_html": "<script>alert(1)</script>"}') -f json
     &lt;script&gt;alert(1)&lt;/script&gt;
 
 Stemp Functions
